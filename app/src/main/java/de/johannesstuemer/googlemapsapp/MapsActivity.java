@@ -33,7 +33,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 LatLng cologne = new LatLng(50.935173, 6.953101);
                 mMap.addMarker(new MarkerOptions().position(cologne).title("Marker in Cologne"));
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(cologne));
+                //mMap.animateCamera(CameraUpdateFactory.newLatLng(cologne));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cologne, 15));
             }
         });
 
