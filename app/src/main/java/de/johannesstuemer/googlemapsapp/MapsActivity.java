@@ -1,5 +1,6 @@
 package de.johannesstuemer.googlemapsapp;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,7 +29,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    Button btn;
+    Button btn, location_btn;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE=101;
@@ -41,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(binding.getRoot());
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        getCurrentLocation();
 
         btn = findViewById(R.id.goto_btn);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +59,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        location_btn = findViewById(R.id.currentLocation_btn);
+        location_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LatLng location = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(location).title("Current Location"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+            }
+        });
     }
 
     /**
@@ -89,6 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        //Wenn permission is granted
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
@@ -100,5 +113,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (REQUEST_CODE) {
+            case REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getCurrentLocation();
+                }
+                break;
+        }
     }
 }
