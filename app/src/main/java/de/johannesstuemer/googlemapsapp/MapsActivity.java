@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 //den Marker auf die koordinaten der aktuellen Position setzen und die Kameraanimation festlegen
                 LatLng location = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(location).title("Current Location"));
+                mMap.addMarker(new MarkerOptions().position(location).title("Ich bin hier!"));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
             }
         });
