@@ -95,9 +95,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
         && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
         != PackageManager.PERMISSION_GRANTED){
+            //wenn noch nicht abgefragt, wird abgefragt
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
             return;
         }
+
+        //ist bereits abgefragt worden gehts hier weiter
         LocationRequest mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(60000);
         mLocationRequest.setFastestInterval(5000);
@@ -131,7 +134,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSuccess(Location location) {
                 if(location != null){
                     currentLocation = location;
-                    //Toast.makeText(getApplicationContext(), (int)currentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
                     SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
                     mapFragment.getMapAsync(MapsActivity.this);
                 }
@@ -145,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (REQUEST_CODE) {
             case REQUEST_CODE:
-                //wenn die permissions erteilt wurden rufe getCurrentLocation() auf
+                //wenn die permissions abgebrochen wurden rufe getCurrentLocation() auf
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getCurrentLocation();
                 }
