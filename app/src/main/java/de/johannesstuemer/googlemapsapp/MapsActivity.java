@@ -47,13 +47,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         getCurrentLocation();
 
+        //button holen und onclicklistener machen
         btn = findViewById(R.id.goto_btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //die Koordinaten von Köln nehmen
                 LatLng cologne = new LatLng(50.935173, 6.953101);
+                //Marker auf die Variable von Köln setzen
                 mMap.addMarker(new MarkerOptions().position(cologne).title("Marker in Cologne"));
-                //mMap.animateCamera(CameraUpdateFactory.newLatLng(cologne));
+                //die Kameraanimation festlegen
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cologne, 15));
             }
         });
@@ -63,10 +66,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //button holen und onclicklistener machen
         location_btn = findViewById(R.id.currentLocation_btn);
         location_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //den Marker auf die koordinaten der aktuellen Position setzen und die Kameraanimation festlegen
                 LatLng location = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(location).title("Current Location"));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
@@ -74,15 +79,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -111,21 +107,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationResult(LocationResult locationResult) {
                 Toast.makeText(getApplicationContext()," location result is  " + locationResult, Toast.LENGTH_LONG).show();
 
+                //wenn location nicht gefunden
                 if (locationResult == null) {
                     Toast.makeText(getApplicationContext(),"current location is null ", Toast.LENGTH_LONG).show();
 
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
+                    //wenn location gefunden
                     if (location != null) {
                         Toast.makeText(getApplicationContext(),"current location is " + location.getLongitude(), Toast.LENGTH_LONG).show();
 
-                        //TODO: UI updates.
                     }
                 }
             }
         };
 
+        //einen Task anlegen
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
         //Wenn permission is granted
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -133,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSuccess(Location location) {
                 if(location != null){
                     currentLocation = location;
-                    Toast.makeText(getApplicationContext(), (int)currentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), (int)currentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
                     SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
                     mapFragment.getMapAsync(MapsActivity.this);
                 }
@@ -141,11 +139,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (REQUEST_CODE) {
             case REQUEST_CODE:
+                //wenn die permissions erteilt wurden rufe getCurrentLocation() auf
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getCurrentLocation();
                 }
